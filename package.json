@@ -1,7 +1,7 @@
 {
   "name": "simple-async-pool",
-  "version": "0.0.1",
-  "description": "Easy to use async and promise returning functions pool with no dependencies",
+  "version": "0.0.2",
+  "description": "Easy to use, dependency free and typesafe concurrent pool of async and promise returning functions",
   "main": "index.js",
   "types": "index.d.ts",
   "directories": {
@@ -20,7 +20,7 @@
   "scripts": {
     "test": "mocha --require ts-node/register --extensions ts 'tests/**/*.ts'",
     "build": "tsc -p tsconfig.build.json",
-    "release": "npm run build && cp package.json dist && npm publish dist"
+    "release": "npm run build && cp package.json dist && cp README.md dist && npm publish ./dist"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,11 @@
     "pool",
     "concurrency",
     "iterator",
-    "async iterator"
+    "async iterator",
+    "typesafe",
+    "typescript",
+    "no dependencies",
+    "dependency free"
   ],
   "author": "Enrique Pöhlmann",
   "license": "MIT",
