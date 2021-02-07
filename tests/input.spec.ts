@@ -27,6 +27,8 @@ describe('Create input iterator', () => {
   })
 
   it('should create an iterator with promises as values (input: async iterator)', async () => {
+    const isNode10 = process.version.startsWith('v10.')
+    const symbolExpectation = isNode10 ? 'Symbol(asyncIterator:done)' : 'asyncIterator:done'
     async function* inputValues() {
       yield 'simple'
       yield 'async'
@@ -41,7 +43,9 @@ describe('Create input iterator', () => {
 
     expect(valuesWithoutDoneSymbol).to.deep.equal(['simple', 'async', 'pool'])
     expect(doneSymbol).to.be.a('symbol')
-    expect(doneSymbol.description).to.equal('asyncIterator:done')
+
+    const symbolDescription = isNode10 ? doneSymbol.toString() : doneSymbol.description
+    expect(symbolDescription).to.equal(symbolExpectation)
   })
 
 })

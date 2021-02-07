@@ -19,7 +19,8 @@
   },
   "scripts": {
     "test": "mocha --require ts-node/register --extensions ts 'tests/**/*.ts'",
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json",
+    "release": "npm run build && cp package.json dist && npm publish dist"
   },
   "repository": {
     "type": "git",
