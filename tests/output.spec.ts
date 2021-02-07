@@ -21,7 +21,7 @@ describe('Create output iterator', () => {
     const workers = createWorkers(2, i, new Map())
     const iterator = createOutputIterator(workers)
 
-    const values: string[] = []
+    const values = []
     for await (const value of iterator) values.push(value)
 
     expect(values).to.deep.equal(['simple', 'async', 'pool'])

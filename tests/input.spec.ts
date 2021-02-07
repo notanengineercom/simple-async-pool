@@ -10,8 +10,8 @@ describe('Create input iterator', () => {
     const inputValues = ['simple', 'async', 'pool']
     const iterator = createInputIterator(inputFunction, inputValues)
 
-    const values: string[] = []
-    for (const value of iterator) values.push(await value as string)
+    const values = []
+    for (const value of iterator) values.push(await value)
 
     expect(values).to.deep.equal(inputValues)
   })
@@ -20,8 +20,8 @@ describe('Create input iterator', () => {
     const inputValues = ['simple', 'async', 'pool']
     const iterator = createInputIterator(inputFunction, inputValues.values())
 
-    const values: string[] = []
-    for (const value of iterator) values.push(await value as string)
+    const values = []
+    for (const value of iterator) values.push(await value)
 
     expect(values).to.deep.equal(inputValues)
   })

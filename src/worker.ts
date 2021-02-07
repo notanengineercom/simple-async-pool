@@ -26,14 +26,14 @@ const workerFactory = <TReturnType extends unknown>(sharedIterator: SharedIterat
       const iteratorResult = sharedIterator.next()
       if (iteratorResult.done) return { workerId, workerPosition, reachedEnd: true }
       const promise = iteratorResult.value as Promise<TReturnType>
-      sharedMap.set(promise as Promise<TReturnType>, null)
+      sharedMap.set(promise, null)
 
-      const result = await promise
-      if (result === ConvertedAsyncIterator.asyncIteratorDone) {
-        sharedMap.delete(promise as Promise<TReturnType>)
+      const result = await promise as TReturnType | symbol
+      if (ConvertedAsyncIterator.isAsyncIteratorDone(result)) {
+        sharedMap.delete(promise)
         return { workerId, workerPosition, reachedEnd: true }
       }
-      sharedMap.set(promise as Promise<TReturnType>, result)
+      sharedMap.set(promise, result)
       return { result, workerId, workerPosition, reachedEnd: false }
     }
 

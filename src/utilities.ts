@@ -19,6 +19,9 @@ class ConvertedAsyncIterator<TValues> {
   private _reachedEnd: boolean = false
 
   static asyncIteratorDone = Symbol('asyncIterator:done')
+  static isAsyncIteratorDone = function (value: any): value is symbol {
+    return value === ConvertedAsyncIterator.asyncIteratorDone
+  }
   constructor(private _asyncIterator: AsyncIterableIterator<TValues>) { }
 
   public *[Symbol.iterator]() {

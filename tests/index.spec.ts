@@ -157,7 +157,7 @@ describe('Simple async pool', () => {
       }
 
       const iterator = pool({ output: 'AsyncIterator', concurrency: 2 }, consumerFunction, generator())
-      const values: number[] = []
+      const values = []
       for await (const value of iterator) values.push(value)
 
       expect(values).to.be.an('array').of.length(3)
@@ -173,7 +173,7 @@ describe('Simple async pool', () => {
 
       const iterator = pool({ output: 'AsyncIterator', concurrency: 2 }, consumerFunction, generator())
 
-      const values: number[] = []
+      const values = []
       for await (const value of iterator) values.push(value)
 
       expect(values).to.be.an('array').of.length(3)
