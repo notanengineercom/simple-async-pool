@@ -1,6 +1,6 @@
 # simple-async-pool
 [![ci:build](https://flat.badgen.net/github/checks/notanengineercom/simple-async-pool/main/build?label=build&icon=github)](https://github.com/notanengineercom/simple-async-pool/actions)
-[![ci:build](https://flat.badgen.net/github/checks/notanengineercom/simple-async-pool/main/test?label=test&icon=github)](https://github.com/notanengineercom/simple-async-pool/actions)
+[![ci:test](https://flat.badgen.net/github/checks/notanengineercom/simple-async-pool/main/test?label=test&icon=github)](https://github.com/notanengineercom/simple-async-pool/actions)
 [![packagephobia](https://flat.badgen.net/packagephobia/install/simple-async-pool)](https://packagephobia.com/result?p=simple-async-pool)
 [![lgtm](https://flat.badgen.net/lgtm/grade/g/notanengineercom/simple-async-pool)](https://lgtm.com/projects/g/notanengineercom/simple-async-pool)
 
