@@ -1,5 +1,4 @@
 import { PoolOptions, SharedIterator, resolveIterator, isIterator, NoOpMap } from './utilities'
-
 import { createInputIterator } from './input'
 import { createWorkers } from './worker'
 import { createOutputIterator } from './output'

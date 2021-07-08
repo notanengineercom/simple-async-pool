@@ -12,7 +12,7 @@ const resolveIterator = async function <TReturnType>(it: AsyncIterableIterator<T
 }
 
 function isIterator<T>(maybeIterator: any): maybeIterator is (IterableIterator<T> | AsyncIterableIterator<T>) {
-  return typeof maybeIterator.next === 'function'
+  return typeof maybeIterator?.next === 'function'
 }
 
 class ConvertedAsyncIterator<TValues> {

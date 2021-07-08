@@ -128,6 +128,20 @@ describe('Simple async pool', () => {
       expect(iterator[Symbol.asyncIterator]).to.be.a('function')
     })
 
+    it('should return an async iterable iterator that computes zero elements', async () => {
+      const iterator = pool({ output: 'AsyncIterator', concurrency: 2 }, consumerFunction)
+      const values: number[] = []
+      for await (const value of iterator) values.push(value)
+      expect(values).to.be.an('array').of.length(0)
+    })
+
+    it('should return an async iterable iterator with zero elements', async () => {
+      const iterator = pool({ output: 'AsyncIterator', concurrency: 2 }, consumerFunction, ...[])
+      const values: number[] = []
+      for await (const value of iterator) values.push(value)
+      expect(values).to.be.an('array').of.length(0)
+    })
+
     it('should return an async iterable iterator in the order of resolution (array)', async () => {
       const iterator = pool({ output: 'AsyncIterator', concurrency: 2 }, consumerFunction, 10, 25, 50)
 
@@ -187,6 +201,11 @@ describe('Simple async pool', () => {
       const values = await pool(consumer, [1, 'simple'], [2, 'async'], [3, 'pool'])
 
       expect(values).to.deep.equal(['simple', 'asyncasync', 'poolpoolpool'])
+    })
+
+    it('should return an empty array for empty inputs', async () => {
+      const values = await pool(consumerFunction, ...[])
+      expect(values).to.be.an('array').of.length(0)
     })
   })
 })
