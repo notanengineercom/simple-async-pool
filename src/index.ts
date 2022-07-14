@@ -1,63 +1,37 @@
-import { PoolOptions, SharedIterator, resolveIterator, isIterator, NoOpMap } from './utilities'
-import { createInputIterator } from './input'
+import { PoolOptions, DecideOnPoolOptions, getPoolOptions, isPoolOptions } from './options'
+import { SharedIterator, resolveIterator, NoOpMap } from './utilities'
+import { TInputArguments, createInputIterator } from './input'
 import { createWorkers } from './worker'
 import { createOutputIterator } from './output'
+import type { TFunction } from './types'
 
-type SimplifyFunctionArgument<T extends unknown[]> = T['length'] extends 1 ? T[0] : T
-type TInput<TValue> = TValue[] | [IterableIterator<TValue>] | [AsyncIterableIterator<TValue>]
-type TFunction<TFunctionArgs extends unknown[], TReturnType extends unknown> = (...args: TFunctionArgs) => Promise<TReturnType>
-type DecideOnPoolOptions<T, P> = P extends PoolOptions ? P['output'] extends 'AsyncIterator' ? AsyncIterableIterator<T> : Promise<T[]> : Promise<T[]>
-
-function isPoolOptions(value: any): value is PoolOptions {
-  return typeof value === 'object'
+const parseInputArguments = <TInput extends TInputArguments<unknown>, TReturnType>(
+  inputArguments: [PoolOptions, TFunction<TInput, TReturnType>, ...TInput] | [TFunction<TInput, TReturnType>, ...TInput]
+): [Required<PoolOptions>, TFunction<TInput, TReturnType>, TInput] => {
+  const [consumerFunctionOrOptions, ...restOfInput] = inputArguments
+  const poolOptions = getPoolOptions(consumerFunctionOrOptions)
+  const consumerFunction = isPoolOptions(consumerFunctionOrOptions) ? restOfInput.shift() as TFunction<TInput, TReturnType> : consumerFunctionOrOptions
+  return [poolOptions, consumerFunction, restOfInput as TInput]
 }
 
-const getPoolOptions = (poolOptions?: PoolOptions): Required<PoolOptions> => {
-  const defaultPoolOptions: Required<PoolOptions> = { output: 'Promise', concurrency: 1 }
-  return { ...defaultPoolOptions, ...poolOptions }
-}
-
-// @ts-expect-error // TODO: find a way to stop getting the overload flagged as error
-function pool<
-  TFunctionArgs extends unknown[],
-  TReturnType extends unknown,
-  TOptions extends PoolOptions
->(
-  options: TOptions,
-  fnc: TFunction<TFunctionArgs, TReturnType>,
-  ...input: TInput<SimplifyFunctionArgument<TFunctionArgs>>
+function pool<TOptions extends PoolOptions, TInput extends TInputArguments<unknown>, TReturnType>(
+  options: TOptions, consumerFunction: TFunction<TInput, TReturnType>, ...input: TInput
 ): DecideOnPoolOptions<TReturnType, TOptions>
-
-function pool<
-  TFunctionArgs extends unknown[],
-  TReturnType extends unknown
->(
-  fnc: TFunction<TFunctionArgs, TReturnType>,
-  ...input: TInput<SimplifyFunctionArgument<TFunctionArgs>>
-): DecideOnPoolOptions<TReturnType, TFunction<TFunctionArgs, TReturnType>>
-
-function pool<
-  TFunctionArgs extends unknown[],
-  TReturnType extends unknown,
-  TOptions extends PoolOptions
->(
-  fnc: TOptions | TFunction<TFunctionArgs, TReturnType>,
-  ...input: [TFunction<TFunctionArgs, TReturnType>, ...TInput<SimplifyFunctionArgument<TFunctionArgs>>] | TInput<SimplifyFunctionArgument<TFunctionArgs>>
+function pool<TInput extends TInputArguments<unknown>, TReturnType>(
+  consumerFunction: TFunction<TInput, TReturnType>, ...input: TInput
+): DecideOnPoolOptions<TReturnType, TFunction<TInput, TReturnType>>
+function pool<TOptions extends PoolOptions, TInput extends TInputArguments<unknown>, TReturnType>(
+  ...inputArguments: [TOptions, TFunction<TInput, TReturnType>, ...TInput] | [TFunction<TInput, TReturnType>, ...TInput]
 ): DecideOnPoolOptions<TReturnType, TOptions> {
-  const poolOptions = isPoolOptions(fnc) ? getPoolOptions(fnc) : getPoolOptions()
-  const consumerFunction = isPoolOptions(fnc) ? input.shift() as TFunction<TFunctionArgs, TReturnType> : fnc
-  const inputValues = isIterator(input[0]) ?
-    input[0] :
-    input as SimplifyFunctionArgument<TFunctionArgs>[]
-
-  const sharedInputIterator = createInputIterator(consumerFunction, inputValues) as SharedIterator<TReturnType>
-  const sharedMap = poolOptions.output === 'Promise' ?
+  const [options, consumerFunction, input] = parseInputArguments(inputArguments)
+  const sharedInputIterator = createInputIterator(consumerFunction, input) as SharedIterator<TReturnType>
+  const sharedMap = options.output === 'Promise' ?
     new Map<Promise<TReturnType>, TReturnType>() :
     new NoOpMap<Promise<TReturnType>, TReturnType>()
-  const workers = createWorkers(poolOptions.concurrency, sharedInputIterator, sharedMap)
+  const workers = createWorkers(options.concurrency, sharedInputIterator, sharedMap)
 
   const iterator = createOutputIterator(workers)
-  return (poolOptions.output === 'AsyncIterator' ?
+  return (options.output === 'AsyncIterator' ?
     iterator :
     resolveIterator(iterator).then(() => [...sharedMap.values()])
   ) as DecideOnPoolOptions<TReturnType, TOptions>

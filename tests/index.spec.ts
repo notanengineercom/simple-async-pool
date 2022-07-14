@@ -27,14 +27,16 @@ describe('Simple async pool', () => {
     })
 
     it('should run with a concurrency of 1 and return an array of values in the order of the input (generator)', async () => {
-      const generator = function* () {
+      const generator = function* generator() {
         yield 10
         yield 25
         yield 50
       }
 
       const values = await pool(consumerFunction, generator())
+      const values2 = await pool(consumerFunction, generator)
       expect(values).to.deep.equal([100, 40, 20])
+      expect(values2).to.deep.equal([100, 40, 20])
     })
 
     it('should run with a concurrency of 1 and return an array of values in the order of the input (async generator)', async () => {
@@ -45,7 +47,9 @@ describe('Simple async pool', () => {
       }
 
       const values = await pool(consumerFunction, generator())
+      const values2 = await pool(consumerFunction, generator)
       expect(values).to.deep.equal([100, 40, 20])
+      expect(values2).to.deep.equal([100, 40, 20])
     })
   })
 
@@ -129,14 +133,15 @@ describe('Simple async pool', () => {
     })
 
     it('should return an async iterable iterator that computes zero elements', async () => {
-      const iterator = pool({ output: 'AsyncIterator', concurrency: 2 }, consumerFunction)
-      const values: number[] = []
+      const iterator = pool({ output: 'AsyncIterator', concurrency: 2 }, async () => 'no value')
+      const values = []
       for await (const value of iterator) values.push(value)
       expect(values).to.be.an('array').of.length(0)
     })
 
     it('should return an async iterable iterator with zero elements', async () => {
-      const iterator = pool({ output: 'AsyncIterator', concurrency: 2 }, consumerFunction, ...[])
+      const emptyArray: number[] = []
+      const iterator = pool({ output: 'AsyncIterator', concurrency: 2 }, consumerFunction, ...emptyArray)
       const values: number[] = []
       for await (const value of iterator) values.push(value)
       expect(values).to.be.an('array').of.length(0)
@@ -195,16 +200,62 @@ describe('Simple async pool', () => {
     })
   })
 
+  describe('Infer function arguments types from input', () => {
+
+    it('should infer from array', async () => {
+      const values = await pool(async value => value.toFixed(2), 10, 25, 50)
+      expect(values).to.deep.equal(['10.00', '25.00', '50.00'])
+    })
+
+    it('should infer from iterator', async () => {
+      const values = await pool(async value => value.toFixed(2), [10, 25, 50].values())
+      expect(values).to.deep.equal(['10.00', '25.00', '50.00'])
+    })
+
+    it('should infer from generator', async () => {
+      const generator = function* () {
+        yield 10
+        yield 25
+        yield 50
+      }
+      const values = await pool(async value => value.toFixed(2), generator())
+      expect(values).to.deep.equal(['10.00', '25.00', '50.00'])
+    })
+
+    it('should infer from async generator', async () => {
+      const generator = async function* () {
+        yield 10
+        yield 25
+        yield 50
+      }
+      const values = await pool(async value => value.toFixed(2), generator())
+      expect(values).to.deep.equal(['10.00', '25.00', '50.00'])
+    })
+
+    it('should infer when providing pool options', async () => {
+      const values = await pool({ concurrency: 3 }, async value => value.toFixed(2), 10, 25, 50)
+      expect(values).to.deep.equal(['10.00', '25.00', '50.00'])
+    })
+
+    it('should infer multiple arguments from input', async () => {
+      const values = await pool(
+        async (valueNumber, valueString) => valueString.repeat(valueNumber),
+        ...[[1, 'simple'], [2, 'async'], [3, 'pool']] as [number, string][]
+      )
+      expect(values).to.deep.equal(['simple', 'asyncasync', 'poolpoolpool'])
+    })
+  })
+
   describe('Misc', () => {
     it('should accept functions with more than one input', async () => {
       const consumer = async (a: number, b: string) => b.repeat(a)
-      const values = await pool(consumer, [1, 'simple'], [2, 'async'], [3, 'pool'])
-
+      const values = await pool(consumer, ...[[1, 'simple'], [2, 'async'], [3, 'pool']] as [number, string][])
       expect(values).to.deep.equal(['simple', 'asyncasync', 'poolpoolpool'])
     })
 
     it('should return an empty array for empty inputs', async () => {
-      const values = await pool(consumerFunction, ...[])
+      const emptyArray: number[] = []
+      const values = await pool(consumerFunction, ...emptyArray)
       expect(values).to.be.an('array').of.length(0)
     })
   })
