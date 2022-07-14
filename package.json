@@ -14,8 +14,8 @@
     "@types/node": "^10.17.51",
     "chai": "^4.3.0",
     "mocha": "^8.2.1",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.1.3"
+    "ts-node": "^10.8.2",
+    "typescript": "^4.7.4"
   },
   "scripts": {
     "test": "mocha --require ts-node/register --extensions ts 'tests/**/*.ts'",
