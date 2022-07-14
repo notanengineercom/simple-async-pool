@@ -39,7 +39,7 @@ const processedValues = await pool(consumerFunction, 'simple', 'async', 'pool') 
 console.log(processedValues) // [ 'simple', 'async', 'pool' ]
 ```
 
-The input values can either be an array (spread syntax), an iterator or an async iterator.
+The input values can either be an array (spread syntax), an iterator, an async iterator or a generator function (async/non async).
 ```ts
 const processedValues = await pool(consumerFunction, 'simple', 'async', 'pool')
 
@@ -65,6 +65,26 @@ async function* input() {
   yield 'pool'
 }
 const processedValues = await pool(consumerFunction, input())
+
+console.log(processedValues) // [ 'simple', 'async', 'pool' ]
+
+// ...
+
+function* input() {
+  yield 'simple'
+  yield 'async'
+  yield 'pool'
+}
+const processedValues = await pool(consumerFunction, input)
+
+// ...
+
+async function* input() {
+  yield 'simple'
+  yield 'async'
+  yield 'pool'
+}
+const processedValues = await pool(consumerFunction, input)
 
 console.log(processedValues) // [ 'simple', 'async', 'pool' ]
 ```
