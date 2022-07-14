@@ -1,6 +1,6 @@
 {
   "name": "simple-async-pool",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Easy to use, dependency free and typesafe concurrent pool of async and promise returning functions",
   "main": "index.js",
   "types": "index.d.ts",
