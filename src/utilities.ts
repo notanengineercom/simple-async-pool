@@ -1,19 +1,21 @@
-interface PoolOptions {
-  output?: 'AsyncIterator' | 'Promise'
-  concurrency?: number
+
+namespace UtilityTypes {
+  export type SimplifyFunctionArgument<T extends unknown[]> = T[0] extends ReadonlyArray<unknown> ? T[0] : [T[0]]
+  export type Unfold<T extends unknown[]> = T extends (
+    [AsyncIterableIterator<infer A>] | [IterableIterator<infer A>] | [() => Generator<infer A>] | [() => AsyncGenerator<infer A>]
+  ) ? [A] : SimplifyFunctionArgument<T>
 }
+
 type SharedIterator<TReturnType> = IterableIterator<Promise<TReturnType | typeof ConvertedAsyncIterator['asyncIteratorDone']>>
 
-const resolveIterator = async function <TReturnType>(it: AsyncIterableIterator<TReturnType>): Promise<void> {
+const resolveIterator = async <TReturnType>(it: AsyncIterableIterator<TReturnType>): Promise<void> => {
   while (true) {
     const itr = await it.next()
     if (itr.done) break
   }
 }
 
-function isIterator<T>(maybeIterator: any): maybeIterator is (IterableIterator<T> | AsyncIterableIterator<T>) {
-  return typeof maybeIterator?.next === 'function'
-}
+const isIterator = <T>(maybeIterator: any): maybeIterator is (IterableIterator<T> | AsyncIterableIterator<T>) => typeof maybeIterator?.next === 'function'
 
 class ConvertedAsyncIterator<TValues> {
   private _reachedEnd: boolean = false
@@ -38,4 +40,4 @@ class NoOpMap<K, V> extends Map<K, V> {
   set() { return this }
 }
 
-export { PoolOptions, SharedIterator, ConvertedAsyncIterator, resolveIterator, isIterator, NoOpMap }
+export { UtilityTypes, SharedIterator, ConvertedAsyncIterator, resolveIterator, isIterator, NoOpMap }

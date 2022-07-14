@@ -18,7 +18,7 @@ const assignWorkerId = <T>(promise: PreWorkerPromise<T>, workerId: symbol): Work
   return promise as WorkerPromise<T>
 }
 
-const workerFactory = <TReturnType extends unknown>(sharedIterator: SharedIterator<TReturnType>, sharedMap: Map<Promise<TReturnType>, TReturnType | null>) => {
+const workerFactory = <TReturnType>(sharedIterator: SharedIterator<TReturnType>, sharedMap: Map<Promise<TReturnType>, TReturnType | null>) => {
   return (workerPosition: number): Worker<TReturnType> => {
     const workerId = Symbol()
 
@@ -41,7 +41,7 @@ const workerFactory = <TReturnType extends unknown>(sharedIterator: SharedIterat
   }
 }
 
-const byWorkerId = (WorkerId: symbol) => <T>(rn: WorkerPromise<T>) => rn[getWorkerId] === WorkerId
+const byWorkerId = (workerId: symbol) => <T>(worker: WorkerPromise<T>) => worker[getWorkerId] === workerId
 
 const createWorkers = <TReturnType>(workersCount: number, sharedIterator: SharedIterator<TReturnType>, sharedMap: Map<Promise<TReturnType>, TReturnType>) => {
   const workerF = workerFactory(sharedIterator, sharedMap)
