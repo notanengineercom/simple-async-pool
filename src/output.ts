@@ -15,6 +15,7 @@ export const createOutputIterator = async function* <TReturnType>(workers: Worke
     }
 
     const workerIndex = runningWorkers.findIndex(byWorkerId(workerId))
-    state.runningWorkersCount -= runningWorkers.splice(workerIndex, 1).length
+    runningWorkers.splice(workerIndex, 1)
+    state.runningWorkersCount--
   }
 }

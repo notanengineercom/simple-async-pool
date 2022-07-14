@@ -18,7 +18,7 @@ describe('Create input iterator', () => {
 
   it('should create an iterator with promises as values (input: iterator)', async () => {
     const inputValues = ['simple', 'async', 'pool']
-    const iterator = createInputIterator(inputFunction, inputValues.values())
+    const iterator = createInputIterator(inputFunction, [inputValues.values()])
 
     const values = []
     for (const value of iterator) values.push(await value)
@@ -34,7 +34,7 @@ describe('Create input iterator', () => {
       yield 'async'
       yield 'pool'
     }
-    const iterator = createInputIterator(inputFunction, inputValues())
+    const iterator = createInputIterator(inputFunction, [inputValues()])
 
     const values = []
     for (const value of iterator) values.push(await value)

@@ -9,8 +9,8 @@ import { SharedIterator } from '../src/utilities'
 describe('Create output iterator', () => {
 
   it('should create an iterator that correctly yields values and ends', async () => {
-    const i = Substitute.for<SharedIterator<string>>()
-    i.next().returns(
+    const input = Substitute.for<SharedIterator<string>>()
+    input.next().returns(
       { value: Promise.resolve('simple') },
       { value: Promise.resolve('async') },
       { value: Promise.resolve('pool') },
@@ -18,7 +18,7 @@ describe('Create output iterator', () => {
       { value: undefined, done: true }
     )
 
-    const workers = createWorkers(2, i, new Map())
+    const workers = createWorkers(2, input, new Map())
     const iterator = createOutputIterator(workers)
 
     const values = []
