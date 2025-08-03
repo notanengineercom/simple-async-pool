@@ -1,6 +1,7 @@
 import { types } from 'util'
-import { ConvertedAsyncIterator, isIterator, UtilityTypes } from './utilities'
-import { TFunction } from './types'
+import type { UtilityTypes } from './utilities';
+import { ConvertedAsyncIterator, isIterator } from './utilities'
+import type { TFunction } from './types'
 
 type TInputArguments<TValue> = TValue[] | [IterableIterator<TValue>] | [AsyncIterableIterator<TValue>]
 
@@ -24,7 +25,7 @@ const getInput = <TInput extends TInputArguments<unknown>>(rawInput: TInput): It
 const createInputIterator = function* <TInput extends TInputArguments<unknown>, TReturnType>(
   consumerFunction: TFunction<TInput, TReturnType>,
   rawInputValues: TInput
-) {
+): Generator<Promise<TReturnType> | Promise<symbol | Promise<TReturnType>>, void, unknown> {
   const getYield = getYieldFactory(consumerFunction)
   const values = getInput(rawInputValues)
 
@@ -34,6 +35,7 @@ const createInputIterator = function* <TInput extends TInputArguments<unknown>, 
   }
 
   const iterator = new ConvertedAsyncIterator(values)
+  // tsl-ignorecore/strictBooleanExpressions
   for (const result of iterator) yield result.then<symbol | Promise<TReturnType>>(({ done, value }) => done ? iterator.endReached() : getYield(value))
 
 }

@@ -1,4 +1,4 @@
-import { TFunction } from './types'
+import type { TFunction } from './types'
 
 interface PoolOptions {
   output?: 'AsyncIterator' | 'Promise'
