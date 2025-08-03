@@ -1,4 +1,5 @@
-import { SharedIterator, ConvertedAsyncIterator } from './utilities'
+import type { SharedIterator} from './utilities';
+import { ConvertedAsyncIterator } from './utilities'
 
 interface Worker<TReturnType> {
   run: () => WorkerPromise<{
@@ -24,6 +25,7 @@ const workerFactory = <TReturnType>(sharedIterator: SharedIterator<TReturnType>,
 
     const run = async () => {
       const iteratorResult = sharedIterator.next()
+      // tsl-ignorecore/strictBooleanExpressions
       if (iteratorResult.done) return { workerId, workerPosition, reachedEnd: true }
       const promise = iteratorResult.value as Promise<TReturnType>
       sharedMap.set(promise, null)
@@ -41,11 +43,11 @@ const workerFactory = <TReturnType>(sharedIterator: SharedIterator<TReturnType>,
   }
 }
 
-const byWorkerId = (workerId: symbol) => <T>(worker: WorkerPromise<T>) => worker[getWorkerId] === workerId
+const byWorkerId = (workerId: symbol) => <T>(worker: WorkerPromise<T>): boolean => worker[getWorkerId] === workerId
 
-const createWorkers = <TReturnType>(workersCount: number, sharedIterator: SharedIterator<TReturnType>, sharedMap: Map<Promise<TReturnType>, TReturnType>) => {
+const createWorkers = <TReturnType>(workersCount: number, sharedIterator: SharedIterator<TReturnType>, sharedMap: Map<Promise<TReturnType>, TReturnType>): Worker<TReturnType>[] => {
   const workerF = workerFactory(sharedIterator, sharedMap)
-  return Array.from({ length: workersCount }).map((_, i) => workerF(i))
+  return Array.from({ length: workersCount }).map((_, i): Worker<TReturnType> => workerF(i))
 }
 
 export { Worker, createWorkers, byWorkerId }

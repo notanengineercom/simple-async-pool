@@ -4,7 +4,7 @@ import { Substitute } from '@fluffy-spoon/substitute'
 
 import { createOutputIterator } from '../src/output'
 import { createWorkers } from '../src/worker'
-import { SharedIterator } from '../src/utilities'
+import type { SharedIterator } from '../src/utilities'
 
 describe('Create output iterator', () => {
 

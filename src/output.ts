@@ -1,4 +1,5 @@
-import { Worker, byWorkerId } from './worker'
+import type { Worker} from './worker';
+import { byWorkerId } from './worker'
 
 export const createOutputIterator = async function* <TReturnType>(workers: Worker<TReturnType>[]): AsyncIterableIterator<TReturnType> {
   const runningWorkers = workers.map(worker => worker.run())
