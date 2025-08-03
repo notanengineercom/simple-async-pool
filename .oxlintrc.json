@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "unicorn",
+    "typescript",
+    "oxc",
+    "import",
+    "node",
+    "promise"
+  ],
+  "rules": {
+    "oxc/no-accumulating-spread": "error",
+    "unicorn/prefer-array-find": "error",
+    "unicorn/prefer-array-flat-map": "error",
+    "unicorn/prefer-set-has": "warn",
+    "eslint/default-case": "warn",
+    "eslint/no-bitwise": "warn",
+    "eslint/no-console": "warn",
+    "eslint/no-empty": "error",
+    "eslint/no-empty-function": "error",
+    "eslint/no-eq-null": "error",
+    "eslint/no-unused-expressions": "error",
+    "eslint/no-var": "error",
+    "eslint/eqeqeq": "error",
+    "import/no-cycle": "error",
+    "import/exports-last": "error",
+    "import/first": "error",
+    "import/group-exports": "error",
+    "import/no-duplicates": "error",
+    "promise/catch-or-return": "error",
+    "typescript/explicit-module-boundary-types": "error",
+    "typescript/consistent-type-imports": "warn"
+  }
+}

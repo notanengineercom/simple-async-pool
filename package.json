@@ -8,19 +8,24 @@
     "test": "tests"
   },
   "devDependencies": {
-    "@fluffy-spoon/substitute": "^1.187.0",
-    "@types/chai": "^4.2.14",
-    "@types/mocha": "^8.2.0",
-    "@types/node": "^10.17.51",
-    "chai": "^4.3.0",
-    "mocha": "^8.2.1",
-    "ts-node": "^10.8.2",
-    "typescript": "^4.7.4"
+    "@fluffy-spoon/substitute": "^2.0.0-beta.4",
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.19.9",
+    "chai": "^5.2.1",
+    "husky": "^9.1.7",
+    "mocha": "^11.7.1",
+    "oxlint": "^1.9.0",
+    "tsl": "^1.0.22",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
   },
   "scripts": {
-    "test": "mocha --require ts-node/register --extensions ts 'tests/**/*.ts'",
-    "build": "tsc -p tsconfig.build.json",
-    "release": "npm run build && cp package.json dist && cp README.md dist && npm publish ./dist"
+    "test": "mocha --require tsx 'tests/**/*.ts'",
+    "lint": "oxlint 'src/**/*.ts' 'tests/**/*.ts'",
+    "build": "tsl -p tsconfig.build.json",
+    "release": "npm run build && cp package.json dist && cp README.md dist && npm publish ./dist",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
