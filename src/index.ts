@@ -1,6 +1,9 @@
-import { PoolOptions, DecideOnPoolOptions, getPoolOptions, isPoolOptions } from './options'
-import { SharedIterator, resolveIterator, NoOpMap } from './utilities'
-import { TInputArguments, createInputIterator } from './input'
+import type { DecideOnPoolOptions} from './options';
+import { PoolOptions, getPoolOptions, isPoolOptions } from './options'
+import type { SharedIterator} from './utilities';
+import { resolveIterator, NoOpMap } from './utilities'
+import type { TInputArguments} from './input';
+import { createInputIterator } from './input'
 import { createWorkers } from './worker'
 import { createOutputIterator } from './output'
 import type { TFunction } from './types'
@@ -14,14 +17,16 @@ const parseInputArguments = <TInput extends TInputArguments<unknown>, TReturnTyp
   return [poolOptions, consumerFunction, restOfInput as TInput]
 }
 
+type PreventOneArgumentArray<T extends TInputArguments<unknown>> = T extends [unknown[]] ? never : T
+
 function pool<TOptions extends PoolOptions, TInput extends TInputArguments<unknown>, TReturnType>(
-  options: TOptions, consumerFunction: TFunction<TInput, TReturnType>, ...input: TInput
+  options: TOptions, consumerFunction: TFunction<TInput, TReturnType>, ...input: PreventOneArgumentArray<TInput> extends never ? never : TInput
 ): DecideOnPoolOptions<TReturnType, TOptions>
 function pool<TInput extends TInputArguments<unknown>, TReturnType>(
-  consumerFunction: TFunction<TInput, TReturnType>, ...input: TInput
+  consumerFunction: TFunction<TInput, TReturnType>, ...input: PreventOneArgumentArray<TInput>
 ): DecideOnPoolOptions<TReturnType, TFunction<TInput, TReturnType>>
 function pool<TOptions extends PoolOptions, TInput extends TInputArguments<unknown>, TReturnType>(
-  ...inputArguments: [TOptions, TFunction<TInput, TReturnType>, ...TInput] | [TFunction<TInput, TReturnType>, ...TInput]
+  ...inputArguments: [TOptions, TFunction<TInput, TReturnType>, ...PreventOneArgumentArray<TInput>] | [TFunction<TInput, TReturnType>, ...PreventOneArgumentArray<TInput>]
 ): DecideOnPoolOptions<TReturnType, TOptions> {
   const [options, consumerFunction, input] = parseInputArguments(inputArguments)
   const sharedInputIterator = createInputIterator(consumerFunction, input) as SharedIterator<TReturnType>
