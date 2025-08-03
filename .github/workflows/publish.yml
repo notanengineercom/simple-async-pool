@@ -4,7 +4,19 @@ on:
     types: [published]
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+
   publish-npm:
+    needs: prepare
     permissions:
       id-token: write
       contents: read
@@ -17,9 +29,11 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - run: npm ci
-      - run: npm run release
+      - run: npm run build
+      - run: npm publish
 
   publish-github:
+    needs: prepare
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,6 +45,7 @@ jobs:
           node-version: 24
           registry-url: 'https://npm.pkg.github.com'
       - run: npm ci
-      - run: npm run release
+      - run: npm run build
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

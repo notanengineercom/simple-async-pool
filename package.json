@@ -2,8 +2,11 @@
   "name": "simple-async-pool",
   "version": "0.0.6",
   "description": "Easy to use, dependency free and typesafe concurrent pool of async and promise returning functions",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "directories": {
     "test": "tests"
   },
@@ -24,7 +27,6 @@
     "test": "mocha --require tsx 'tests/**/*.ts'",
     "lint": "oxlint 'src/**/*.ts' 'tests/**/*.ts' && tsl -p tsconfig.json",
     "build": "tsc -p tsconfig.build.json",
-    "release": "npm run build && cp package.json dist && cp README.md dist && npm publish ./dist",
     "prepare": "husky"
   },
   "repository": {
