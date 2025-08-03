@@ -1,8 +1,8 @@
 # simple-async-pool
-[![ci:build](https://flat.badgen.net/github/checks/notanengineercom/simple-async-pool/main/build?label=build&icon=github)](https://github.com/notanengineercom/simple-async-pool/actions)
-[![ci:test](https://flat.badgen.net/github/checks/notanengineercom/simple-async-pool/main/test?label=test&icon=github)](https://github.com/notanengineercom/simple-async-pool/actions)
+[![npm:version](https://flat.badgen.net/npm/license/simple-async-pool?icon=npm)](https://www.npmjs.com/package/simple-async-pool)
+[![npm:version](https://flat.badgen.net/npm/v/simple-async-pool?icon=npm)](https://www.npmjs.com/package/simple-async-pool)
 [![packagephobia](https://flat.badgen.net/packagephobia/install/simple-async-pool)](https://packagephobia.com/result?p=simple-async-pool)
-[![lgtm](https://flat.badgen.net/lgtm/grade/g/notanengineercom/simple-async-pool)](https://lgtm.com/projects/g/notanengineercom/simple-async-pool)
+[![ci](https://flat.badgen.net/github/checks/notanengineercom/simple-async-pool/main?icon=github)](https://github.com/notanengineercom/simple-async-pool/actions)
 
 Easy to use, dependency free and typesafe concurrent pool of async and promise returning functions.
 
