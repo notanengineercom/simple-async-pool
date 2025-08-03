@@ -22,8 +22,8 @@
   },
   "scripts": {
     "test": "mocha --require tsx 'tests/**/*.ts'",
-    "lint": "oxlint 'src/**/*.ts' 'tests/**/*.ts'",
-    "build": "tsl -p tsconfig.build.json",
+    "lint": "oxlint 'src/**/*.ts' 'tests/**/*.ts' && tsl -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
     "release": "npm run build && cp package.json dist && cp README.md dist && npm publish ./dist",
     "prepare": "husky"
   },
